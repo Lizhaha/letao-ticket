@@ -1,29 +1,30 @@
 <template>
-    <div class="login">
+    <div class="register">
         <div class="left-img">
-            <img src="../assets/images/loginImg.svg" alt="login页">
+            <img src="../assets/images/loginImg.svg" alt="注册页">
         </div>
         <div class="right-form">
-            <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
-                <el-form-item label="账号" prop="account">
-                    <el-input v-model="ruleForm.account" autocomplete="off"></el-input>
+            <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm" label-width="100px" class="ruleForm">
+                <el-form-item label="账号" prop="phoneNum">
+                    <el-input v-model="ruleForm.phoneNum" autocomplete="off"></el-input>
                 </el-form-item>
-                <el-form-item label="密码" prop="pass">
-                    <el-input type="password" v-model="ruleForm.pass" autocomplete="off"></el-input>
+                <el-form-item label="密码" prop="passwordpassword">
+                    <el-input type="password" v-model="ruleForm.password" autocomplete="off"></el-input>
                 </el-form-item>
                 <el-form-item label="确认密码" prop="checkPass">
                     <el-input type="password" v-model="ruleForm.checkPass" autocomplete="off"></el-input>
                 </el-form-item>
                 <el-form-item>
                     <el-button type="primary" @click="submitForm('ruleForm')" :loading="registerLoading">注册</el-button>
+                    <router-link to="/login" class="jump-tip"><el-button>还没有账号？去登录</el-button></router-link>
                 </el-form-item>
             </el-form>
-            <router-link to="/">还没有账号？去登录</router-link>
         </div>
     </div>
 </template>
 
 <script>
+import {register} from '../service/index';
 export default {
     data () {
         var validateAccount = (rule, value, callback) => {
@@ -50,7 +51,7 @@ export default {
         var validatePass2 = (rule, value, callback) => {
             if (value === '') {
                 callback(new Error('请再次输入密码'));
-            } else if (value !== this.ruleForm.pass) {
+            } else if (value !== this.ruleForm.password) {
                 callback(new Error('两次输入密码不一致!'));
             } else {
                 callback();
@@ -58,15 +59,15 @@ export default {
         };
         return {
             ruleForm: {
-                pass: '',
+                password: '',
                 checkPass: '',
-                account: ''
+                phoneNum: ''
             },
             rules: {
-                account: [
+                phoneNum: [
                     { validator: validateAccount, trigger: 'blur' }
                 ],
-                pass: [
+                password: [
                     { validator: validatePass, trigger: 'blur' }
                 ],
                 checkPass: [
@@ -80,7 +81,24 @@ export default {
         submitForm(formName) {
             this.$refs[formName].validate((valid) => {
                 if (valid) {
-                    alert('submit!');
+                    this.registerLoading = true;
+                    register({
+                        phoneNum: this.ruleForm.phoneNum,
+                        password: this.ruleForm.password
+                    }).then((res) => {
+                        if (res.success) {
+                            this.$message.success('注册成功');
+                            this.$router.push({path: '/login'});
+                        } else if (res.success === false && res.message.length) {
+                            this.$message.error(res.message);
+                        } else {
+                            this.$message.error('注册失败');
+                        }
+                    }).catch(() => {
+                        this.$message.error('网络错误，请稍后重试');
+                    }).finally(() => {
+                        this.registerLoading = false;
+                    });
                 } else {
                     console.log('error submit!!');
                     return false;
@@ -92,7 +110,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.login {
+.register {
     display: flex;
     .left-img {
         flex: 1;
@@ -103,6 +121,12 @@ export default {
     .right-form {
         flex: 1;
         padding: 20px;
+    }
+    .ruleForm {
+        max-width: 500px;
+        .jump-tip {
+            margin-left: 12px;
+        }
     }
 }
 </style>

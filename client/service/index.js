@@ -9,18 +9,30 @@ export function validate() {
   return http.get('/validate');
 }
 
-export function updateMemberInfo(params) {
-  return http.post('/UpdateUserInfo', params);
+export function login(params) {
+  return http.post('/user/login', params);
 }
 
-export function clearSeat(params) {
-  return http.post('/ClearUserSeatInfo', params);
+export function register(params) {
+  return http.post('/user/register', params);
 }
 
-export function createManager(params) {
-  return http.post('/AddManager', params);
+export function getUserInfo(params) {
+  return http.get('/user/userInfo', params);
 }
 
-export function deleteManager(params) {
-  return http.post('/DeleteManager', params);
+export function getMovieList(params) {
+  return http.get('/movie/list', params);
+}
+
+export function searchMovie(params) {
+  return http.get('/movie/search', params);
+}
+
+export function getDetail(params) {
+  return http.get('/movie/detail', params);
+}
+
+export function wantLook(params) {
+  return http.put('/movie/wantLook', params);
 }

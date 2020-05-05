@@ -1,30 +1,55 @@
 <template>
   <div id="app">
-    <Header></Header>
+    <Header @change-select="handleChangeSelect"></Header>
     <div>
-      <router-view/>
+      <router-view @check="getUserInfo"/>
     </div>
     <Footer></Footer>
   </div>
 </template>
 
 <script>
-import {validate} from './service/index';
-import Header from './components/Header.vue'
-import Footer from './components/Footer.vue'
+import { validate, getUserInfo } from './service/index';
+import Header from './components/Header.vue';
+import Footer from './components/Footer.vue';
+import { mapActions } from 'vuex';
 export default {
   components: {
     Header,
     Footer
   },
-  mounted () {
-    validate().then((res) => {
-      if (!res.success) {
+  methods: {
+    ...mapActions([
+      'setUserInfo',
+      'setActiveType'
+    ]),
+    validate (callback) {
+      validate().then((res) => {
+        if (!res.success) {
+          this.$router.replace({path: '/login'});
+        } else {
+          if (this.$route.name === 'login' || this.$route.name === 'register') this.$router.replace({path: '/'});
+          callback();
+        }
+      }).catch(() => {
         this.$router.replace({path: '/login'});
-      } else {
-        this.$router.replace({path: '/'});
-      }
-    });
+        this.$message.error('登录信息已过期，请重新登录');
+      });
+    },
+    getUserInfo () {
+      getUserInfo().then((res) => {
+        this.setUserInfo(res.data);
+      }).catch(() => {
+        this.$message.error('网络错误，请稍后重试');
+      })
+    },
+    handleChangeSelect (activeIndex) {
+      this.setActiveType(activeIndex);
+      if (this.$route.name !== 'index') this.$router.push({name: 'index'});
+    }
+  },
+  mounted () {
+    this.validate(this.getUserInfo);
   }
 }
 </script>

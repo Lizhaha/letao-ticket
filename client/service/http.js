@@ -1,15 +1,14 @@
-import Vue from 'vue'
+import vm from '../main'
 import axios from 'axios';
 import {
   Message
 } from 'element-ui';
-import Util from '../utils/token'
+import tokenUtil from '../utils/token'
 
 axios.defaults.baseURL = 'http://127.0.0.1:8081';
 axios.interceptors.request.use(function (conf) {
-  const token = Util.getCookie('my_token');
-  console.log(conf);
-  if (token) conf.headers['Token'] = `${token}`;
+  const token = tokenUtil.getCookie('my_token');
+  if (token) conf.headers['token'] = `${token}`;
   return conf;
 });
 
@@ -23,8 +22,9 @@ axios.interceptors.response.use(
       switch (error.response.status) {
         case 401:
           // 返回 401 清除token信息并跳转到登录页面
-          console.log(error.response);
-          Vue.$router.replace({path: '/login'});
+          console.log(vm);
+          vm.$router.push({path: '/login'});
+          tokenUtil.clearCookie('my_token');
           break;
         default:
           console.log(error.response);

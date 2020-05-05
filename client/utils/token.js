@@ -13,14 +13,18 @@ let getCookie = (name) => {
             var cookie = cookies[i].trim();
             if (cookie.substring(0, name.length + 1) === (name + '=')) {
                 cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
             }
         }
     }
     return cookieValue;
 }
 
+let clearCookie = () => {
+    setTokenToCookie("");
+}
+
 export default {
     setTokenToCookie,
-    getCookie
+    getCookie,
+    clearCookie
 };

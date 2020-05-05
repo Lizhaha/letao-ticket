@@ -1,10 +1,10 @@
 <template>
     <div class="login">
         <div class="left-img">
-            <img src="../assets/images/loginImg.svg" alt="login页">
+            <img src="../assets/images/loginImg.svg" alt="登录页">
         </div>
         <div class="right-form">
-            <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+            <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm" label-width="100px" class="ruleForm">
                 <el-form-item label="账号" prop="phoneNum">
                     <el-input v-model="ruleForm.phoneNum" autocomplete="off"></el-input>
                 </el-form-item>
@@ -13,16 +13,16 @@
                 </el-form-item>
                 <el-form-item>
                     <el-button type="primary" @click="submitForm('ruleForm')" :loading="loginLoading">登录</el-button>
+                    <router-link to="/register" class="jump-tip"><el-button>还没有账号？去注册</el-button></router-link>
                 </el-form-item>
             </el-form>
-            <router-link to="/register">还没有账号？去注册</router-link>
         </div>
     </div>
 </template>
 
 <script>
-import axios from 'axios';
-import Util from '../utils/token.js';
+import {login} from '../service/index';
+import tokenUtil from '../utils/token.js';
 export default {
     data () {
         var validatePhoneNum = (rule, value, callback) => {
@@ -67,21 +67,18 @@ export default {
             this.$refs[formName].validate((valid) => {
                 if (valid) {
                     this.loginLoading = true;
-                    axios({
-                        method: 'post',
-                        url: 'http://127.0.0.1:8081/user/login',
-                        data: {
-                            phoneNum: this.ruleForm.phoneNum,
-                            password: this.ruleForm.password
-                        }     
+                    login({
+                        phoneNum: this.ruleForm.phoneNum,
+                        password: this.ruleForm.password
                     }).then((res) => {
                         console.log(res);
-                        let data = res.data;
-                        if (data.success) {
-                            Util.setTokenToCookie(data.data);
+                        if (res.success) {
+                            tokenUtil.setTokenToCookie(res.data);
                             this.$message.success('登录成功');
-                        } else if (data.success === false && data.message.length) {
-                            this.$message.error(data.message);
+                            this.$router.replace({path: '/'});
+                            this.$emit('check');
+                        } else if (res.success === false && res.message.length) {
+                            this.$message.error(res.message);
                         } else {
                             this.$message.error('登录失败');
                         }
@@ -112,6 +109,12 @@ export default {
     .right-form {
         flex: 1;
         padding: 20px;
+    }
+    .ruleForm {
+        max-width: 500px;
+        .jump-tip {
+            margin-left: 12px;
+        }
     }
 }
 </style>

@@ -1,3 +1,4 @@
+// 返回给前端的数据格式
 const resMsg = (status, msg, data) => {
     let mainBody = {
         success: status,
@@ -6,4 +7,7 @@ const resMsg = (status, msg, data) => {
     if (data) mainBody.data = data;
     return mainBody;
 }
-module.exports = resMsg;
+
+module.exports = {
+    resMsg
+};
