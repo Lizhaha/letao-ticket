@@ -7,7 +7,8 @@ export default new Vuex.Store({
   state: {
     userInfo: null,
     activeType: '',
-    defaultImg: '../assets/images/loginImg.svg'
+    defaultImg: '../assets/images/loginImg.svg',
+    cinemaMsg: null
   },
   mutations: {
     userInfo (state, userInfo) {
@@ -28,6 +29,9 @@ export default new Vuex.Store({
           state.activeType = '';
           break;
       }
+    },
+    cinemaMsg (state, msg) {
+      state.cinemaMsg = msg;
     }
   },
   actions: {
@@ -37,6 +41,9 @@ export default new Vuex.Store({
     setActiveType ({ commit }, index) {
       console.log('active index', index);
       commit('activeType', index);
+    },
+    setCinemaMsg ({ commit }, msg) {
+      commit('cinemaMsg', msg);
     }
   },
   getters: {
@@ -48,6 +55,9 @@ export default new Vuex.Store({
     },
     defaultImg (state) {
       return state.defaultImg;
+    },
+    cinemaMsg (state) {
+      return state.cinemaMsg;
     }
   },
   modules: {

@@ -4,6 +4,7 @@ import Index from '../views/Index.vue'
 import Login from '../views/Login.vue'
 import Register from '../views/Register.vue'
 import Detail from '../views/Detail.vue'
+import Buy from '../views/Buy.vue'
 
 Vue.use(VueRouter)
 
@@ -27,6 +28,11 @@ const routes = [
     path: '/detail/:movieId',
     name: 'detail',
     component: Detail
+  },
+  {
+    path: '/buy',
+    name: 'buyPage',
+    component: Buy
   },
   {
     path: '*',

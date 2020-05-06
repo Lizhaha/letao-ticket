@@ -9,6 +9,10 @@ export function validate() {
   return http.get('/validate');
 }
 
+export function cinemaMsg() {
+  return http.get('/cinema');
+}
+
 export function login(params) {
   return http.post('/user/login', params);
 }
@@ -33,6 +37,14 @@ export function getDetail(params) {
   return http.get('/movie/detail', params);
 }
 
+export function getCommentList(params) {
+  return http.get('/movie/comment', params);
+}
+
 export function wantLook(params) {
   return http.put('/movie/wantLook', params);
+}
+
+export function submitGrade(params) {
+  return http.post('/movie/grading', params);
 }

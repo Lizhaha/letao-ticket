@@ -56,6 +56,16 @@ app.get('/validate', function (req, res) {
     }
 })
 
+// 返回影院信息
+app.get('/cinema', function (req, res) {
+  res.send(Util.resMsg(true, '影院信息', {
+    address: '广东省汕尾市陆丰市霞边路7号',
+    contact: '0660-0000000',
+    businessHours: '10:00 - 22:00',
+    remarks: '如有其他想要了解的可以拨打电话联系我们哦~'
+  }));
+})
+
 //用户相关接口：登录，注册，用户信息
 app.use('/user', user);
 

@@ -78,6 +78,20 @@ router.get('/detail', function (req, res) {
     });
 })
 
+router.get('/comment', function (req, res) {
+    let movieId = req.query.movieId;
+    const sql = `select movie_grade.*, user.user_id, user.user_name, user.avatar from movie_grade, user where movie_grade.movie_id = ${movieId} and movie_grade.user_id = user.user_id`;
+    conn.query(sql,(err,result) => {
+        if(err) {
+            res.send(Util.resMsg(false, '获取评论列表失败'));
+            console.log('获取评论列表失败'+err.message)
+            return;
+        } else {
+            res.send(Util.resMsg(true, `评论列表`, result));
+        }
+    });
+})
+
 router.put('/wantLook', function (req, res) {
     let userId = req.body.userId;
     let movieId = req.body.movieId;
@@ -96,6 +110,25 @@ router.put('/wantLook', function (req, res) {
         } else {
             console.log('执行想看操作成功', result);
             res.send(Util.resMsg(true, `${isWantLook ? '已为您添加想看' : '已取消想看'}`));
+        }
+    });
+})
+
+router.post('/grading', function (req, res) {
+    let userId = req.body.userId;
+    let movieId = req.body.movieId;
+    let grade = req.body.grade;
+    let comment = req.body.comment;
+    let gradingTime = req.body.gradingTime;
+    let sql = `insert into movie_grade (user_id, movie_id, grade, comment, grading_time) values (${userId}, ${movieId}, ${grade}, '${comment}', '${gradingTime}')`;
+    conn.query(sql,(err,result) => {
+        if(err) {
+            res.send(Util.resMsg(false, `评分失败`));
+            console.log('打分失败'+err.message, sql)
+            return;
+        } else {
+            console.log(result);
+            res.send(Util.resMsg(true, `评分成功`));
         }
     });
 })

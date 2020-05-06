@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import { validate, getUserInfo } from './service/index';
+import { validate, getUserInfo, cinemaMsg } from './service/index';
 import Header from './components/Header.vue';
 import Footer from './components/Footer.vue';
 import { mapActions } from 'vuex';
@@ -21,7 +21,8 @@ export default {
   methods: {
     ...mapActions([
       'setUserInfo',
-      'setActiveType'
+      'setActiveType',
+      'setCinemaMsg'
     ]),
     validate (callback) {
       validate().then((res) => {
@@ -46,10 +47,20 @@ export default {
     handleChangeSelect (activeIndex) {
       this.setActiveType(activeIndex);
       if (this.$route.name !== 'index') this.$router.push({name: 'index'});
+    },
+    getCinemaMsg () {
+      cinemaMsg().then((res) => {
+        if (res.success) {
+          this.setCinemaMsg(res.data);
+        }
+      }).catch(() => {
+        console.log('获取影院信息失败');
+      });
     }
   },
   mounted () {
     this.validate(this.getUserInfo);
+    this.getCinemaMsg();
   }
 }
 </script>

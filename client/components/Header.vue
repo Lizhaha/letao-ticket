@@ -36,7 +36,9 @@
                 <div class="avatar">
                     <el-dropdown trigger="click" @command="handleClickMenu">
                         <span class="el-dropdown-link">
-                            <el-avatar icon="el-icon-user-solid"></el-avatar><i class="el-icon-caret-bottom"></i>
+                            <el-avatar icon="el-icon-user-solid" v-if="!userInfo.avatar"></el-avatar>
+                            <el-avatar :src="userInfo.avatar"></el-avatar>
+                            <i class="el-icon-caret-bottom"></i>
                         </span>
                         <el-dropdown-menu slot="dropdown">
                             <el-dropdown-item command="0" class="user-name">{{userInfo.userName}}{{userInfo.isRoot ? '（超级管理员）' : ''}}</el-dropdown-item>
