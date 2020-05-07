@@ -133,4 +133,29 @@ router.post('/grading', function (req, res) {
     });
 })
 
+router.get('/schedule', function(req, res) {
+    let movieId = req.query.movieId;
+    let date = req.query.date;
+    const sql = `select schedule.*, room.room_name, room.column, room.row,room.empty_seats from schedule, room where TO_DAYS(start_time)=TO_DAYS('${date}') and schedule.room_id = room.room_id and schedule.movie_id = ${movieId}`;
+    conn.query(sql, (err, result) => {
+        if (err) {
+            res.send(Util.resMsg(false, '查询排班表失败'));
+        } else {
+            res.send(Util.resMsg(true, '排班信息', result));
+        }
+    });
+})
+
+router.get('/select', function(req, res) {
+    let scheduleId = req.query.scheduleId;
+    const sql = `select schedule.*,room.room_name,room.row,room.column,room.empty_seats from schedule,room where schedule.schedule_id = ${scheduleId} and schedule.room_id = room.room_id`;
+    conn.query(sql, (err, result) => {
+        if (err) {
+            res.send(Util.resMsg(false, '查询某一排班相关信息失败'));
+        } else {
+            res.send(Util.resMsg(true, '查询成功', result[0]));
+        }
+    });
+})
+
 module.exports = router;

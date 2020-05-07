@@ -24,7 +24,6 @@ router.post('/login', function (req, res) {
 })
 
 router.post('/register', function (req, res) {
-  console.log(req.body);
     let phoneNum = req.body.phoneNum;
     let password = req.body.password;
     // 查询conn.query('sql语句',回调函数)

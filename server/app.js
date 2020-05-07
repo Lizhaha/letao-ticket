@@ -6,6 +6,7 @@ const Util = require('./utils/util');
 const Token = require('./utils/token');
 const user = require('./routes/user');
 const movie = require('./routes/movie');
+const order = require('./routes/order');
 
 var app = express();
 app.use(history({
@@ -48,7 +49,6 @@ app.get('/', function (req, res) {
 app.get('/validate', function (req, res) {
     //解密
     let data = Token.decrypt(req.headers.token);  //将请求头的token取出解密
-    console.log(req.headers);
     if (data.token) {
         res.send(Util.resMsg(true, '已经登录了'));
     }else{
@@ -71,6 +71,9 @@ app.use('/user', user);
 
 //电影相关接口：
 app.use('/movie', movie);
+
+//订单相关接口：
+app.use('/order', order);
 
 // 监听
 app.listen(8081, function () {

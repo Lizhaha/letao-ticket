@@ -69,4 +69,11 @@ export default {
 #app {
   padding: 0 20px;
 }
+.el-table__header-wrapper thead th{
+    color: #000;
+    background: #BDD1D5;
+}
+.price {
+  color: #ef4238;
+}
 </style>

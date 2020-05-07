@@ -48,3 +48,15 @@ export function wantLook(params) {
 export function submitGrade(params) {
   return http.post('/movie/grading', params);
 }
+
+export function getSchedule(params) {
+  return http.get('/movie/schedule', params);
+}
+
+export function getUserSelect(params) {
+  return http.get('/movie/select', params);
+}
+
+export function getSelectedSeat(params) {
+  return http.get('/order/seat', params);
+}

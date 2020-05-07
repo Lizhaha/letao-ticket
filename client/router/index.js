@@ -5,6 +5,7 @@ import Login from '../views/Login.vue'
 import Register from '../views/Register.vue'
 import Detail from '../views/Detail.vue'
 import Buy from '../views/Buy.vue'
+import SelectSeat from '../views/SelectSeat.vue'
 
 Vue.use(VueRouter)
 
@@ -33,6 +34,11 @@ const routes = [
     path: '/buy',
     name: 'buyPage',
     component: Buy
+  },
+  {
+    path: '/select-seat',
+    name: 'selectSeat',
+    component: SelectSeat
   },
   {
     path: '*',
