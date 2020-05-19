@@ -1,8 +1,8 @@
 <template>
   <div id="app">
     <Header @change-select="handleChangeSelect"></Header>
-    <div>
-      <router-view @check="getUserInfo"/>
+    <div style="flex:1;padding: 0 20px">
+      <router-view @check="getUserInfo" @editSuccess="getUserInfo"/>
     </div>
     <Footer></Footer>
   </div>
@@ -13,6 +13,7 @@ import { validate, getUserInfo, cinemaMsg } from './service/index';
 import Header from './components/Header.vue';
 import Footer from './components/Footer.vue';
 import { mapActions } from 'vuex';
+import Util from './utils/util';
 export default {
   components: {
     Header,
@@ -22,7 +23,8 @@ export default {
     ...mapActions([
       'setUserInfo',
       'setActiveType',
-      'setCinemaMsg'
+      'setCinemaMsg',
+      'setIsVisitByPhone'
     ]),
     validate (callback) {
       validate().then((res) => {
@@ -61,13 +63,21 @@ export default {
   mounted () {
     this.validate(this.getUserInfo);
     this.getCinemaMsg();
+    this.setIsVisitByPhone(Util.visitByPhone());
   }
 }
 </script>
 
 <style lang="scss">
+body {
+  margin: 0;
+}
 #app {
-  padding: 0 20px;
+  min-height: 100vh;
+  box-sizing: border-box;
+  // padding: 0 20px;
+  display: flex;
+  flex-direction: column;
 }
 .el-table__header-wrapper thead th{
     color: #000;

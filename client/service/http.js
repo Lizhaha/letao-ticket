@@ -4,8 +4,9 @@ import {
   Message
 } from 'element-ui';
 import tokenUtil from '../utils/token'
+import store from '../store/index';
 
-axios.defaults.baseURL = 'http://127.0.0.1:8081';
+axios.defaults.baseURL = store.getters.baseUrl;
 axios.interceptors.request.use(function (conf) {
   const token = tokenUtil.getCookie('my_token');
   if (token) conf.headers['token'] = `${token}`;

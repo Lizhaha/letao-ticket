@@ -8,7 +8,9 @@ export default new Vuex.Store({
     userInfo: null,
     activeType: '',
     defaultImg: '../assets/images/loginImg.svg',
-    cinemaMsg: null
+    cinemaMsg: null,
+    baseUrl: 'http://192.168.51.102:8081',
+    isVisitByPhone: false
   },
   mutations: {
     userInfo (state, userInfo) {
@@ -32,6 +34,9 @@ export default new Vuex.Store({
     },
     cinemaMsg (state, msg) {
       state.cinemaMsg = msg;
+    },
+    isVisitByPhone (state, bool) {
+      state.isVisitByPhone = bool
     }
   },
   actions: {
@@ -44,6 +49,9 @@ export default new Vuex.Store({
     },
     setCinemaMsg ({ commit }, msg) {
       commit('cinemaMsg', msg);
+    },
+    setIsVisitByPhone ({ commit }, bool) {
+      commit('isVisitByPhone', bool);
     }
   },
   getters: {
@@ -58,6 +66,12 @@ export default new Vuex.Store({
     },
     cinemaMsg (state) {
       return state.cinemaMsg;
+    },
+    baseUrl (state) {
+      return state.baseUrl
+    },
+    isVisitByPhone (state) {
+      return state.isVisitByPhone;
     }
   },
   modules: {

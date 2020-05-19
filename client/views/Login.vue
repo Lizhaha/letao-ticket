@@ -1,6 +1,6 @@
 <template>
     <div class="login">
-        <div class="left-img">
+        <div class="left-img" v-if="!isVisitByPhone">
             <img src="../assets/images/loginImg.svg" alt="登录页">
         </div>
         <div class="right-form">
@@ -9,7 +9,7 @@
                     <el-input v-model="ruleForm.phoneNum" autocomplete="off"></el-input>
                 </el-form-item>
                 <el-form-item label="密码" prop="password">
-                    <el-input type="passwordword" v-model="ruleForm.password" autocomplete="off"></el-input>
+                    <el-input type="password" v-model="ruleForm.password" autocomplete="off"></el-input>
                 </el-form-item>
                 <el-form-item>
                     <el-button type="primary" @click="submitForm('ruleForm')" :loading="loginLoading">登录</el-button>
@@ -22,6 +22,7 @@
 
 <script>
 import {login} from '../service/index';
+import { mapGetters } from 'vuex';
 import tokenUtil from '../utils/token.js';
 export default {
     data () {
@@ -93,6 +94,11 @@ export default {
                 }
             });
         }
+    },
+    computed: {
+        ...mapGetters([
+            'isVisitByPhone'
+        ]),
     }
 }
 </script>
@@ -108,7 +114,7 @@ export default {
     }
     .right-form {
         flex: 1;
-        padding: 20px;
+        padding: 20px 0;
     }
     .ruleForm {
         max-width: 500px;

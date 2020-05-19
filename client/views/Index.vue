@@ -1,11 +1,11 @@
 <template>
     <div class="index">
-        <el-row :gutter="20" v-if="movieList.length">
-            <el-col :span="4" v-for="item in movieList" :key="item.movieId">
+        <el-row type="flex" :gutter="20">
+            <el-col :span="isVisitByPhone ? 24 : 4" v-for="item in movieList" :key="item.movieId">
                 <el-card :body-style="{ padding: '0px' }">
                     <div class="movie-card" @click="handleJumpToDetail" :data-movie-id="item.movie_id">
                         <img src="../assets/images/defaultImg.svg" class="image" v-if="!item.img_url">
-                        <img :src="item.img_url" class="image" v-if="item.img_url">
+                        <img :src="baseUrl+item.img_url" class="image" v-if="item.img_url">
                         <div style="padding: 14px;">
                             <div class="bottom clearfix">
                             <time class="movie-name">{{item.movie_name}}</time>
@@ -16,7 +16,7 @@
                 </el-card>
             </el-col>
         </el-row>
-        <Empty :emptyType="emptyType" v-else></Empty>
+        <Empty :emptyType="emptyType" v-if="!(movieList && movieList.length)"></Empty>
     </div>
 </template>
 
@@ -35,14 +35,13 @@ export default {
     computed: {
         ...mapGetters([
             'activeType',
-            'defaultImg'
+            'defaultImg',
+            'baseUrl',
+            'isVisitByPhone'
         ]),
     },
     components: {
         Empty
-    },
-    mounted () {
-        this.getMovieList();
     },
     watch: {
         'activeType': {
@@ -54,6 +53,7 @@ export default {
     },
     methods: {
         getMovieList () {
+            console.log(this.activeType)
             if (!this.activeType) return;
             getMovieList({
                 params: {
@@ -100,6 +100,9 @@ export default {
 
 <style lang="scss" scoped>
 .index {
+    .el-row {
+        flex-wrap: wrap;
+    }
     .movie-name {
         font-size: 13px;
         color: #999;
@@ -131,6 +134,9 @@ export default {
     }
     .movie-card {
         cursor: pointer;
+    }
+    .el-card {
+        margin-bottom: 20px;
     }
 }
 </style>

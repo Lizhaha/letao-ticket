@@ -1,10 +1,10 @@
 <template>
     <div class="detail">
         <div v-if="movieDetail" class="main-content">
-            <el-row :gutter="20" class="movie-msg">
+            <el-row :gutter="20" class="movie-msg" type="flex">
                 <el-col :span="5" class="left-img">
                     <img src="../assets/images/defaultImg.svg" alt="" v-if="!movieDetail || !movieDetail.img_url">
-                    <img :src="movieDetail.img_url" alt="" v-else>
+                    <img :src="baseUrl + movieDetail.img_url" alt="" v-else>
                 </el-col>
                 <el-col :span="19" class="right-msg">
                     <div class="msg">
@@ -75,7 +75,7 @@
                 <div v-if="commentList && commentList.length" class="comment-body">
                     <div class="single-comment" v-for="item in commentList" :key="item.comment_id">
                         <el-avatar icon="el-icon-user-solid" v-if="!item.avatar"></el-avatar>
-                        <el-avatar :src="item.avatar" v-else></el-avatar>
+                        <el-avatar :src="baseUrl + item.avatar" v-else></el-avatar>
                         <div class="right">
                             <span :class="['name', item.user_id === userInfo.userId ? 'self' : '']">{{item.user_name}}{{item.user_id === userInfo.userId ? '（我）': ''}}</span>
                             <span class="time">{{item.grading_time}}</span>
@@ -147,7 +147,9 @@ export default {
     },
     computed: {
         ...mapGetters([
-            'userInfo'
+            'userInfo',
+            'baseUrl',
+            'isVisitByPhone'
         ])
     },
     methods: {
@@ -354,10 +356,15 @@ export default {
             }
         }
     }
+    .inPhone {
+        flex-direction: column;
+        width: 100%;
+    }
     .member {
         display: flex;
         .el-tag {
             margin-right: 10px;
+            margin-bottom: 10px;
         }
         .actor {
             margin-left: 20px;

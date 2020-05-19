@@ -31,24 +31,47 @@
         </div>
         <div class="movie-msg">
             <h3>{{$route.query.movieName}}</h3>
+            <p>放映厅：{{userSelect.room_name}}</p>
             <p>场次：{{userSelect.start_time}}（散场：{{userSelect.end_time}}）</p>
             <p>票价：<span class="price">{{userSelect.price}}元</span> / 张</p>
             <div class="checked" v-if="checkedSeats && checkedSeats.length">
                 <p>已选座位：</p>
                 <el-tag v-for="item in checkedSeats" :key="item.row + ''+ item.column">
-                    {{item.row}}排{{item.column}}列
+                    {{item.row}}排{{item.column}}座
                 </el-tag>
                 <p>总价：<span class="price">{{totalPrice}}元</span></p>
                 <el-button type="primary" size="medium" @click="handleGoPay">确认，去付款</el-button>
             </div>
             <p class="tip" v-else><i class="el-icon-warning-outline" style="margin-right: 5px"></i>请选择您的观影位置</p>
         </div>
+        <el-dialog class="pay-way" title="请选择您的支付方式" :visible.sync="isShowPay">
+            <div class="content">
+                <h1>￥{{totalPrice}}元</h1>
+                <el-radio v-model="payWay" label="1">
+                    <i class="wechat"></i>
+                    <span>微信支付</span>
+                </el-radio>
+                <el-radio v-model="payWay" label="2">
+                    <i class="alipay"></i>
+                    <span>支付宝</span>
+                </el-radio>
+            </div>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="handleCancel">取 消</el-button>
+                <el-button
+                    type="primary"
+                    @click="handleCheckPay"
+                    :loading="isLoading"
+                >付 款</el-button>
+            </div>
+        </el-dialog>
     </div>
     <Empty :emptyType="emptyType" v-else></Empty>
 </template>
 
 <script>
-import { getSelectedSeat, getUserSelect } from '../service/index';
+import { getSelectedSeat, getUserSelect, submitOrder } from '../service/index';
+import { mapGetters } from 'vuex';
 import moment from 'moment';
 import Empty from '../components/Empty';
 
@@ -73,13 +96,19 @@ export default {
             selectedSeats: null,
             checkedSeats: [],
             userSelect: null,
-            emptyType: 'error'
+            emptyType: 'error',
+            isShowPay: false,
+            isLoading: false,
+            payWay: '1'
         }
     },
     components: {
         Empty
     },
     computed: {
+        ...mapGetters([
+            'userInfo'
+        ]),
         totalPrice () {
             return (this.userSelect.price * this.checkedSeats.length).toFixed(2);
         }
@@ -177,7 +206,36 @@ export default {
             });
         },
         handleGoPay () {
-
+            this.isShowPay = true;
+        },
+        handleCheckPay () {
+            this.isLoading = true;
+            let seat = this.checkedSeats.map((item) => {
+                return item.row + '-' + item.column;
+            }).join(',');
+            submitOrder({
+                scheduleId: this.userSelect.schedule_id,
+                userId: this.userInfo.userId,
+                seat: seat
+            }).then((res) => {
+                if (res.success) {
+                    this.isShowPay = false;
+                    this.isLoading = false;
+                    this.$message.success('支付成功');
+                    this.$router.push({name: 'order'});
+                } else {
+                    this.isLoading = false;
+                    this.$message.error(res.message || '支付出错');
+                }
+            }).catch((e) => {
+                console.log(e);
+                this.isLoading = false;
+                this.$message.error('网络错误，请稍后再试');
+            });
+        },
+        handleCancel () {
+            this.isLoading = false;
+            this.isShowPay = false;
         }
     }
 }
@@ -204,6 +262,7 @@ export default {
                 }
             }
             .seat {
+                display: inline-block;
                 cursor: pointer;
             }
             .select-area {
@@ -247,6 +306,31 @@ export default {
             width: 24px;
             display: inline-block;
             content: url(../assets/images/seat-checked.svg);
+        }
+        .pay-way {
+            .content {
+                margin-top: -10px;
+            }
+            h1 {
+                text-align: center;
+            }
+            .wechat, .alipay {
+                display: inline-block;
+                position: relative;
+                top: 10px;
+            }
+            .wechat::after {
+                width: 32px;
+                height: 32px;
+                display: inline-block;
+                content: url(../assets/images/wechat.svg);
+            }
+            .alipay::after {
+                width: 32px;
+                height: 32px;
+                display: inline-block;
+                content: url(../assets/images/alipay.svg);
+            }
         }
     }
 </style>

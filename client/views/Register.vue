@@ -1,6 +1,6 @@
 <template>
     <div class="register">
-        <div class="left-img">
+        <div class="left-img" v-if="!isVisitByPhone">
             <img src="../assets/images/loginImg.svg" alt="注册页">
         </div>
         <div class="right-form">
@@ -8,7 +8,7 @@
                 <el-form-item label="账号" prop="phoneNum">
                     <el-input v-model="ruleForm.phoneNum" autocomplete="off"></el-input>
                 </el-form-item>
-                <el-form-item label="密码" prop="passwordpassword">
+                <el-form-item label="密码" prop="password">
                     <el-input type="password" v-model="ruleForm.password" autocomplete="off"></el-input>
                 </el-form-item>
                 <el-form-item label="确认密码" prop="checkPass">
@@ -16,7 +16,7 @@
                 </el-form-item>
                 <el-form-item>
                     <el-button type="primary" @click="submitForm('ruleForm')" :loading="registerLoading">注册</el-button>
-                    <router-link to="/login" class="jump-tip"><el-button>还没有账号？去登录</el-button></router-link>
+                    <router-link to="/login" class="jump-tip"><el-button>已有账号？去登录</el-button></router-link>
                 </el-form-item>
             </el-form>
         </div>
@@ -25,6 +25,7 @@
 
 <script>
 import {register} from '../service/index';
+import { mapGetters } from 'vuex';
 export default {
     data () {
         var validateAccount = (rule, value, callback) => {
@@ -52,7 +53,7 @@ export default {
             if (value === '') {
                 callback(new Error('请再次输入密码'));
             } else if (value !== this.ruleForm.password) {
-                callback(new Error('两次输入密码不一致!'));
+                callback(new Error('两次输入的密码不一致!'));
             } else {
                 callback();
             }
@@ -105,6 +106,11 @@ export default {
                 }
             });
         }
+    },
+    computed: {
+        ...mapGetters([
+            'isVisitByPhone'
+        ]),
     }
 }
 </script>
@@ -120,7 +126,7 @@ export default {
     }
     .right-form {
         flex: 1;
-        padding: 20px;
+        padding: 20px 0;
     }
     .ruleForm {
         max-width: 500px;

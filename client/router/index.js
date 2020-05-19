@@ -6,6 +6,11 @@ import Register from '../views/Register.vue'
 import Detail from '../views/Detail.vue'
 import Buy from '../views/Buy.vue'
 import SelectSeat from '../views/SelectSeat.vue'
+import Order from '../views/Order.vue'
+import Personal from '../views/Personal.vue'
+import Manage from '../views/Manage.vue'
+import WantLook from '../views/WantLook.vue'
+import Etc from '../views/Etc.vue'
 
 Vue.use(VueRouter)
 
@@ -41,8 +46,34 @@ const routes = [
     component: SelectSeat
   },
   {
+    path: '/order',
+    name: 'order',
+    component: Order
+  },
+  {
+    path: '/personal',
+    name: 'personal',
+    component: Personal
+  },
+  {
+    path: '/manage',
+    name: 'manage',
+    component: Manage
+  },
+  {
+    path: '/wantLook',
+    name: 'wantLook',
+    component: WantLook
+  },
+  {
+    path: '/etc',
+    name: 'etc',
+    component: Etc
+  },
+  {
     path: '*',
-    redirect: '/'
+    name: 'index',
+    component: Index
   }
 ]
 

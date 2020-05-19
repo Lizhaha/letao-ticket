@@ -1,10 +1,10 @@
 <template>
     <div class="footer">
-        <ul>
-            <li>商业合作</li>
-            <li>联系我们</li>
-            <li>反馈及建议</li>
-        </ul>
+        <div>
+            <p @click="$router.push({name: 'etc'})">商业合作</p>
+            <p @click="$router.push({name: 'etc'})">联系我们</p>
+            <p @click="$router.push({name: 'etc'})">反馈及建议</p>
+        </div>
         <span>© 2020 乐淘票 版权所有</span>
     </div>
 </template>
@@ -27,12 +27,9 @@ export default {
         text-align: center;
         padding: 20px;
         font-size: 14px;
-        ul {
-            list-style: none;
-            li {
-                cursor: pointer;
-                padding: 5px 0;
-            }
+        p {
+            cursor: pointer;
+            padding: 5px 0;
         }
     }
 </style>

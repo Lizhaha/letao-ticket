@@ -71,7 +71,7 @@ export default {
             timeList: [
                 {
                     label: moment().format('MM月DD日') + '（今天）',
-                    name: moment().format('YYYY-MM-DD')
+                    name: moment().format('YYYY-MM-DD HH:mm:ss')
                 },{
                     label: moment().add(1, 'd').format('MM月DD日'),
                     name: moment().add(1, 'd').format('YYYY-MM-DD')
@@ -83,7 +83,7 @@ export default {
                     name: moment().add(3, 'd').format('YYYY-MM-DD')
                 }
             ],
-            selectTime: moment().format('YYYY-MM-DD'),
+            selectTime: moment().format('YYYY-MM-DD HH:mm:ss'),
             scheduleList: null
         }
     },
@@ -96,7 +96,7 @@ export default {
         ])
     },
     mounted () {
-        this.handleTabClick(this.selectTime);
+        this.handleTabClick({name: this.selectTime});
     },
     methods: {
         handleTabClick (val) {

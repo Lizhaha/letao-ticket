@@ -38,11 +38,12 @@ app.use(bodyParser.urlencoded({
 }));
 
 // 访问静态资源
-app.use(express.static(path.resolve(__dirname, '../dist')));
+// app.use(express.static(path.resolve(__dirname, '../dist')));
+app.use('/static', express.static(path.join(__dirname, 'public')));
 
 // 访问单页
 app.get('/', function (req, res) {
-    res.sendFile(path.join(process.cwd(), "client/index.html"));
+    res.send('Hello');
 });
 
 // 验证接口

@@ -1,6 +1,6 @@
 <template>
     <div class="header">
-        <el-row>
+        <el-row type="flex" style="align-items:center" v-if="!isVisitByPhone">
             <el-col :span="userInfo ? 6 : 24" class="logo">
                 <img src="../assets/images/logo.svg" alt="网站logo" height="56">
             </el-col>
@@ -28,7 +28,7 @@
                             :data-movie-id="item.movie_id"
                         >
                             <img src="../assets/images/defaultImg.svg" alt="" v-if="!item.img_url">
-                            <img :src="item.img_url" alt="" v-else>
+                            <img :src="baseUrl + item.img_url" alt="" v-else>
                             <span>{{item.movie_name}}</span>
                         </div>
                     </div>
@@ -37,12 +37,14 @@
                     <el-dropdown trigger="click" @command="handleClickMenu">
                         <span class="el-dropdown-link">
                             <el-avatar icon="el-icon-user-solid" v-if="!userInfo.avatar"></el-avatar>
-                            <el-avatar :src="userInfo.avatar"></el-avatar>
+                            <el-avatar :src="baseUrl + userInfo.avatar"></el-avatar>
                             <i class="el-icon-caret-bottom"></i>
                         </span>
                         <el-dropdown-menu slot="dropdown">
                             <el-dropdown-item command="0" class="user-name">{{userInfo.userName}}{{userInfo.isRoot ? '（超级管理员）' : ''}}</el-dropdown-item>
+                            <el-dropdown-item command="4" v-if="userInfo.isRoot">后台管理</el-dropdown-item>
                             <el-dropdown-item command="1">我的订单</el-dropdown-item>
+                            <el-dropdown-item command="5">想看列表</el-dropdown-item>
                             <el-dropdown-item command="2">个人信息</el-dropdown-item>
                             <el-dropdown-item command="3">退出登录</el-dropdown-item>
                         </el-dropdown-menu>
@@ -50,6 +52,40 @@
                 </div>
             </el-col>
         </el-row>
+        <div v-else class="inPhone">
+            <el-row type="flex" style="align-items:center">
+                <el-col :span="userInfo ? 6 : 24" class="logo">
+                    <img src="../assets/images/logo.svg" alt="网站logo" height="24">
+                </el-col>
+                <el-col :span="13" v-if="userInfo">
+                    <el-select v-model="activeIndex" @change="handleSelect" placeholder="请选择" size="mini">
+                        <el-option label="正在热映" value="1"></el-option>
+                        <el-option label="即将上映" value="2"></el-option>
+                        <el-option label="热门影片" value="3"></el-option>
+                        <el-option label="" value="-1"></el-option>
+                    </el-select>
+                </el-col>
+                <el-col :span="5" class="header-right" v-if="userInfo">
+                    <div class="avatar">
+                        <el-dropdown trigger="click" @command="handleClickMenu">
+                            <span class="el-dropdown-link">
+                                <el-avatar :size="25" icon="el-icon-user-solid" v-if="!userInfo.avatar"></el-avatar>
+                                <el-avatar :size="25" :src="baseUrl + userInfo.avatar"></el-avatar>
+                                <i class="el-icon-caret-bottom"></i>
+                            </span>
+                            <el-dropdown-menu slot="dropdown">
+                                <el-dropdown-item command="0" class="user-name">{{userInfo.userName}}{{userInfo.isRoot ? '（超级管理员）' : ''}}</el-dropdown-item>
+                                <el-dropdown-item command="4" v-if="userInfo.isRoot">后台管理</el-dropdown-item>
+                                <el-dropdown-item command="1">我的订单</el-dropdown-item>
+                                <el-dropdown-item command="5">想看列表</el-dropdown-item>
+                                <el-dropdown-item command="2">个人信息</el-dropdown-item>
+                                <el-dropdown-item command="3">退出登录</el-dropdown-item>
+                            </el-dropdown-menu>
+                        </el-dropdown>
+                    </div>
+                </el-col>
+            </el-row>
+        </div>
     </div>
 </template>
 
@@ -69,10 +105,13 @@ export default {
     },
     computed: {
         ...mapGetters([
-            'userInfo'
+            'userInfo',
+            'baseUrl',
+            'isVisitByPhone'
         ]),
     },
     mounted () {
+        this.setActiveType(this.activeIndex);
         document.onclick = () => {
             this.isShowResult = false;
         };
@@ -86,16 +125,22 @@ export default {
             console.log(command);
             switch (command) {
                 case '1':
-                    console.log('查看我的订单');
+                    this.$router.push({path: '/order'});
                     break;
                 case '2':
-                    console.log('查看个人信息');
+                    this.$router.push({path: '/personal'});
                     break;
                 case '3':
                     this.$message.success("退出成功");
                     this.$router.push({path: '/login'});
                     this.setUserInfo(null);
                     tokenUtil.clearCookie('my_token');
+                    break;
+                case '4':
+                    this.$router.push({path: '/manage'});
+                    break;
+                case '5':
+                    this.$router.push({path: '/wantLook'});
                     break;
                 default:
                     break;
@@ -162,16 +207,15 @@ export default {
 
 <style lang="scss" scoped>
 .header {
+    padding: 0 20px;
     margin-bottom: 20px;
-    .logo, .header-right {
-        border-bottom: 1px solid #e6e6e6;
-    }
+    border-bottom: 1px solid #e6e6e6;
     .header-right {
         height: 61px;
         display: flex;
         align-items: center;
         .search {
-            flex: 2;
+            flex: 1;
             position: relative;
             .result {
                 width: 100%;
@@ -198,7 +242,6 @@ export default {
             }
         }
         .avatar {
-            flex: 1;
             text-align: left;
             margin-left: 20px;
         }
@@ -208,6 +251,19 @@ export default {
             .el-icon-caret-bottom {
                 position: relative;
                 top: -12px;
+            }
+        }
+    }
+    .el-menu {
+        border-bottom: none;
+    }
+    .inPhone {
+        .el-input {
+            margin-bottom: 20px;
+        }
+        .el-dropdown-link {
+            .el-icon-caret-bottom {
+                top: -6px;
             }
         }
     }
