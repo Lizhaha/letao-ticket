@@ -342,7 +342,7 @@
         <el-dialog title="添加放映场次" :visible.sync="formVisible.schedule">
             <el-form :model="scheduleForm" status-icon :rules="rules" ref="scheduleForm" label-width="100px">
                 <el-form-item label="影片名称" prop="movieId">
-                    <el-select v-model="scheduleForm.movieId" placeholder="请选择">
+                    <el-select v-model="scheduleForm.movieId" filterable placeholder="请选择">
                         <el-option
                             v-for="item in tableData.movie"
                             :key="item.movieId"

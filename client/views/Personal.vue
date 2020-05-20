@@ -1,8 +1,8 @@
 <template>
-    <div class="personal">
+    <div :class="['personal', isVisitByPhone ? 'inPhone' : '']">
         <div class="left-avatar">
-            <el-avatar shape="square" :size="200" icon="el-icon-user-solid" v-if="!(userInfo && userInfo.avatar)"></el-avatar>
-            <el-avatar shape="square" :size="200" fit="fit" :src="imageUrl" v-else></el-avatar>
+            <el-avatar shape="square" :size="isVisitByPhone ? 100 : 200" icon="el-icon-user-solid" v-if="!(userInfo && userInfo.avatar)"></el-avatar>
+            <el-avatar shape="square" :size="isVisitByPhone ? 100 : 200" fit="fill" :src="imageUrl" v-else></el-avatar>
             <el-upload
                 v-if="userInfo"
                 ref="upload"
@@ -88,7 +88,8 @@ export default {
     computed: {
         ...mapGetters([
             'userInfo',
-            'baseUrl'
+            'baseUrl',
+            'isVisitByPhone'
         ]),
         imageUrl () {
             return this.userInfo && this.userInfo.avatar ? this.baseUrl + this.userInfo.avatar : '';
@@ -168,8 +169,20 @@ export default {
             margin-top: 10px;
         }
     }
-    .right-message {
-
+    &.inPhone {
+        .left-avatar {
+            width: 120px;
+        }
+        .el-button {
+            width: 100px;
+        }
+        .btn-group {
+            .el-button {
+                width: 60px;
+                padding-left: 0;
+                padding-right: 0;
+            }
+        }
     }
 }
 </style>

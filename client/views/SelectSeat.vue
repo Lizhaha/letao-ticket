@@ -1,5 +1,5 @@
 <template>
-    <div class="select-page" v-if="userSelect">
+    <div :class="['select-page',isVisitByPhone ? 'inPhone' : '']" v-if="userSelect">
         <div class="select">
             <div class="legend">
                 <span class="item">
@@ -44,7 +44,7 @@
             </div>
             <p class="tip" v-else><i class="el-icon-warning-outline" style="margin-right: 5px"></i>请选择您的观影位置</p>
         </div>
-        <el-dialog class="pay-way" title="请选择您的支付方式" :visible.sync="isShowPay">
+        <el-dialog :class="['pay-way', isVisitByPhone ? 'pay-dialog' : '']" title="请选择您的支付方式" :visible.sync="isShowPay">
             <div class="content">
                 <h1>￥{{totalPrice}}元</h1>
                 <el-radio v-model="payWay" label="1">
@@ -107,7 +107,8 @@ export default {
     },
     computed: {
         ...mapGetters([
-            'userInfo'
+            'userInfo',
+            'isVisitByPhone'
         ]),
         totalPrice () {
             return (this.userSelect.price * this.checkedSeats.length).toFixed(2);
@@ -241,7 +242,7 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
     .select-page {
         display: flex;
         .select {
@@ -332,5 +333,32 @@ export default {
                 content: url(../assets/images/alipay.svg);
             }
         }
+        &.inPhone {
+            flex-direction: column;
+            .select {
+                margin-right: 0;
+            }
+            .seat {
+                margin: 0 2px;
+            }
+            .seat-off::before {
+                width: 17px;
+            }
+            .seat-selected::before {
+                width: 17px;
+            }
+            .seat-checked::before {
+                width: 17px;
+            }
+            .num {
+                display: none !important;
+            }
+        }
     }
+    
+.pay-dialog {
+    .el-dialog{
+        width: 80%;
+    }
+}
 </style>

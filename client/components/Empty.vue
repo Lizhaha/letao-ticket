@@ -1,5 +1,5 @@
 <template>
-    <div class="empty">
+    <div :class="['empty', isVisitByPhone ? 'inPhone' : '']">
         <img src="../assets/images/error.svg" alt="" v-if="emptyType === 'error'">
         <img src="../assets/images/null.svg" alt="" v-if="emptyType === 'null'">
         <img src="../assets/images/scheduleNull.svg" alt="" v-if="emptyType === 'scheduleNull'">
@@ -8,10 +8,16 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
 export default {
     props: [
         'emptyType'
-    ]
+    ],
+    computed: {
+        ...mapGetters([
+            'isVisitByPhone'
+        ])
+    }
 }
 </script>
 
@@ -20,6 +26,11 @@ export default {
     text-align: center;
     img {
         width: 50%;
+    }
+}
+.inPhone {
+    img {
+        width: 100%
     }
 }
 </style>

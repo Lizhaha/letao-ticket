@@ -1,13 +1,13 @@
 <template>
-    <div class="order">
-        <el-row :gutter="20">
+    <div :class="['want-look', isVisitByPhone ? 'inPhone' : '']">
+        <el-row :gutter="20" type="flex">
             <el-col :span="12" v-for="item in wantLookList" :key="item.want_id">
                 <div @click="$router.push({name: 'detail', params: {movieId: item.movie_id}})">
                     <el-row class="item" type="flex">
                         <el-col :span="5">
                             <img :src="baseUrl+item.img_url" alt="" width="80">
                         </el-col>
-                        <el-col :span="19">
+                        <el-col :span="19" :class="[isVisitByPhone ? 'msg' : '']">
                             <P class="title">
                                 {{item.movie_name}}
                             </P>
@@ -35,7 +35,8 @@ export default {
     computed: {
         ...mapGetters([
             'userInfo',
-            'baseUrl'
+            'baseUrl',
+            'isVisitByPhone'
         ])
     },
     mounted () {
@@ -70,8 +71,8 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
-.order {
+<style lang="scss">
+.want-look {
     font-size: 14px;
     .item {
         width: 100%;
@@ -91,6 +92,20 @@ export default {
                 font-size: 14px;
                 font-weight: lighter;
             }
+        }
+    }
+    .el-row {
+        flex-wrap: wrap;
+    }
+    &.inPhone {
+        img {
+            display: none;
+        }
+        .el-tag {
+            margin-top: 10px;
+        }
+        .msg {
+            width: 100%;
         }
     }
 }

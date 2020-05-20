@@ -1,7 +1,7 @@
 <template>
     <div class="detail">
         <div v-if="movieDetail" class="main-content">
-            <el-row :gutter="20" class="movie-msg" type="flex">
+            <el-row :gutter="20" :class="['movie-msg',isVisitByPhone ? 'inPhone' : '']" v-if="!isVisitByPhone" type="flex">
                 <el-col :span="5" class="left-img">
                     <img src="../assets/images/defaultImg.svg" alt="" v-if="!movieDetail || !movieDetail.img_url">
                     <img :src="baseUrl + movieDetail.img_url" alt="" v-else>
@@ -53,6 +53,51 @@
                     </div>
                 </el-col>
             </el-row>
+            <div :class="[isVisitByPhone ? 'inPhone' : '']" v-else>
+                <div class="msg">
+                    <h1 class="item movie-name">{{movieDetail.movie_name}}</h1>
+                    <p class="item movie-type">
+                        <span v-for="type in movieDetail.movie_type" :key="type">{{type}}</span>
+                    </p>
+                    <p class="item">{{movieDetail.region}} / {{movieDetail.time_length}} 分钟</p>
+                    <p class="item">{{movieDetail.release_time}} 上映</p>
+                </div>
+                <div class="other-msg">
+                    <div class="grade-count">
+                        <p class="title">本站累计评分</p>
+                        <p class="content" v-if="!movieDetail.grade">暂无评分</p>
+                        <el-rate
+                            v-else
+                            v-model="movieDetail.grade"
+                            disabled
+                            show-score
+                            text-color="#fff"
+                            score-template="{value}分">
+                        </el-rate>
+                        <p class="title">{{movieDetail.is_releasing ? '本站累计票房' : '本站想看数'}}</p>
+                        <p class="content">{{movieDetail.is_releasing ? movieDetail.box_office : movieDetail.want_look_count}}</p>
+                    </div>
+                    <div class="operate">
+                        <div class="btn-group">
+                            <el-button
+                                size="small"
+                                @click="handleWantLook"
+                            ><i :class="movieDetail.is_want_look ? 'like-on' : 'like-off'"></i>想看</el-button>
+                            <el-button
+                                size="small"
+                                icon="el-icon-star-off"
+                                @click="handleGrading"
+                            >评分</el-button>
+                        </div>
+                        <el-button
+                            size="small"
+                            class="buy-ticket"
+                            v-if="movieDetail.is_releasing"
+                            @click="$router.push({name: 'buyPage', query: {movieId: movieDetail.movie_id, movieName: movieDetail.movie_name}})"
+                        >购票</el-button>
+                    </div>
+                </div>
+            </div>
             <div class="introduction">
                 <h1>剧情介绍</h1>
                 <span class="block-text">{{movieDetail.introduction}}</span>
@@ -93,7 +138,7 @@
             </div>
         </div>
         <Empty :emptyType="emptyType" v-if="isShowEmpty"></Empty>
-        <el-dialog title="评分" :visible.sync="isShowGrading">
+        <el-dialog title="评分" :visible.sync="isShowGrading" :class="isVisitByPhone ? 'rate-dialog' : ''">
             <div slot="title">
                 <span>点击<i class="el-icon-star-off" style="margin: 0 2px;"></i>进行评分</span>
             </div>
@@ -266,7 +311,7 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .main-content {
     font-size: 14px !important;
     .movie-msg {
@@ -295,14 +340,6 @@ export default {
                 .movie-name {
                     font-size: 26px;
                     font-weight: bold;
-                }
-                .movie-type {
-                    span {
-                        margin-left: 6px;
-                    }
-                    span:nth-of-type(1) {
-                        margin-left: 0;
-                    }
                 }
             }
             .other-msg {
@@ -357,8 +394,60 @@ export default {
         }
     }
     .inPhone {
-        flex-direction: column;
         width: 100%;
+        padding: 10px;
+        box-sizing: border-box;
+        color: #fff;
+        background: #ea5d41;
+        position: relative;
+        .other-msg {
+            flex-direction: column;
+            position: relative !important;
+            bottom: 0;
+        }
+        .operate {
+            .btn-group {
+                display: flex;
+                .el-button--small {
+                    flex: 1;
+                }
+                .like-on, .like-off {
+                    margin-right: 5px;
+                }
+                .like-on::before {
+                    width: 12px;
+                    height: 14px;
+                    display: inline-block;
+                    content: url(../assets/images/like-on.svg);
+                }
+                .like-off::before {
+                    width: 12px;
+                    height: 14px;
+                    display: inline-block;
+                    content: url(../assets/images/like-off.svg);
+                }
+            }
+            .buy-ticket {
+                width: 100%;
+                margin-top: 10px;
+            }
+            .movie-type {
+                span {
+                    margin-left: 6px;
+                }
+                span:nth-of-type(1) {
+                    margin-left: 0;
+                }
+            }
+        }
+        .movie-type {
+            span {
+                margin-right: 6px;
+            }
+        }
+        .content {
+            color: #f7ba2a;
+        }
     }
     .member {
         display: flex;
@@ -401,6 +490,11 @@ export default {
     }
     .block-text {
         line-height: 24px;
+    }
+}
+.rate-dialog {
+    .el-dialog{
+        width: 80%;
     }
 }
 </style>

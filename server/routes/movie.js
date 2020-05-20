@@ -193,7 +193,8 @@ router.get('/schedule', function(req, res) {
     let date = req.query.date;
     const sql = `select schedule.*, room.room_name, room.column, room.row,room.empty_seats ` +
         `from schedule, room ` +
-        `where TO_DAYS(start_time)=TO_DAYS('${date}') and unix_timestamp(start_time)>unix_timestamp('${date}') and schedule.room_id = room.room_id and schedule.movie_id = ${movieId}`;
+        `where TO_DAYS(start_time)=TO_DAYS('${date}') and unix_timestamp(start_time)>=unix_timestamp('${date}') and schedule.room_id = room.room_id and schedule.movie_id = ${movieId}`;
+    console.log(sql);
     conn.query(sql, (err, result) => {
         if (err) {
             res.send(Util.resMsg(false, '查询排班表失败'));

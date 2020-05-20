@@ -1,6 +1,6 @@
 <template>
     <div class="order">
-        <el-row :gutter="20">
+        <el-row :gutter="20" type="flex">
             <el-col :span="12" v-for="item in orderList" :key="item.order_id">
                 <div :class="['item',item.is_time_end ? 'time-end' : '']">
                     <P class="title">
@@ -107,6 +107,9 @@ export default {
         .ticket-code {
             color: #ccc;
         }
+    }
+    .el-row {
+        flex-wrap: wrap;
     }
 }
 </style>

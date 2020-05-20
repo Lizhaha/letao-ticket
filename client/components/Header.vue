@@ -62,7 +62,7 @@
                         <el-option label="正在热映" value="1"></el-option>
                         <el-option label="即将上映" value="2"></el-option>
                         <el-option label="热门影片" value="3"></el-option>
-                        <el-option label="" value="-1"></el-option>
+                        <el-option :label="$route.name" value="-1"></el-option>
                     </el-select>
                 </el-col>
                 <el-col :span="5" class="header-right" v-if="userInfo">
@@ -75,7 +75,7 @@
                             </span>
                             <el-dropdown-menu slot="dropdown">
                                 <el-dropdown-item command="0" class="user-name">{{userInfo.userName}}{{userInfo.isRoot ? '（超级管理员）' : ''}}</el-dropdown-item>
-                                <el-dropdown-item command="4" v-if="userInfo.isRoot">后台管理</el-dropdown-item>
+                                <el-dropdown-item command="4" v-if="userInfo.isRoot && !isVisitByPhone">后台管理</el-dropdown-item>
                                 <el-dropdown-item command="1">我的订单</el-dropdown-item>
                                 <el-dropdown-item command="5">想看列表</el-dropdown-item>
                                 <el-dropdown-item command="2">个人信息</el-dropdown-item>
@@ -207,6 +207,8 @@ export default {
 
 <style lang="scss" scoped>
 .header {
+    width: 100%;
+    box-sizing: border-box;
     padding: 0 20px;
     margin-bottom: 20px;
     border-bottom: 1px solid #e6e6e6;
