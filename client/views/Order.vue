@@ -1,6 +1,6 @@
 <template>
     <div class="order">
-        <el-row :gutter="20" type="flex">
+        <el-row :gutter="20" type="flex" v-if="orderList && orderList.length">
             <el-col :span="12" v-for="item in orderList" :key="item.order_id">
                 <div :class="['item',item.is_time_end ? 'time-end' : '']">
                     <P class="title">
@@ -16,17 +16,23 @@
                 </div>
             </el-col>
         </el-row>
+        <Empty :emptyType="emptyType" v-else></Empty>
     </div>
 </template>
 
 <script>
 import { orderList } from '../service/index';
 import { mapGetters } from 'vuex';
+import Empty from '../components/Empty';
 export default {
     data () {
         return {
-            orderList: null
+            orderList: null,
+            emptyType: 'null'
         }
+    },
+    components: {
+        Empty
     },
     computed: {
         ...mapGetters([

@@ -34,10 +34,11 @@ router.post('/submit', function (req, res) {
     let seat = req.body.seat;
     let ticketCode = Util.getTicketCode(7);
     let count = seat.split(',').length;
+    let orderTime = moment().format('YYYY-MM-DD HH:mm:ss');
     //解密
     let data = Token.decrypt(req.headers.token);  //将请求头的token取出解密
     if (data.token) {
-        let sql = `insert into \`order\` (user_id, schedule_id, seat,count, ticket_code) values (${userId}, ${scheduleId}, '${seat}', ${count}, '${ticketCode}')`;
+        let sql = `insert into \`order\` (user_id, schedule_id, seat,count, ticket_code,order_time) values (${userId}, ${scheduleId}, '${seat}', ${count}, '${ticketCode}', '${orderTime}')`;
         conn.query(sql,(err) => {
             if(err) {
                 res.send(Util.resMsg(false, `插入订单信息失败，请重新支付`));

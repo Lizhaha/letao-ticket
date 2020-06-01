@@ -1,6 +1,6 @@
 <template>
     <div :class="['want-look', isVisitByPhone ? 'inPhone' : '']">
-        <el-row :gutter="20" type="flex">
+        <el-row :gutter="20" type="flex" v-if="wantLookList && wantLookList.length">
             <el-col :span="12" v-for="item in wantLookList" :key="item.want_id">
                 <div @click="$router.push({name: 'detail', params: {movieId: item.movie_id}})">
                     <el-row class="item" type="flex">
@@ -20,17 +20,23 @@
                 </div>
             </el-col>
         </el-row>
+        <Empty :emptyType="emptyType" v-else></Empty>
     </div>
 </template>
 
 <script>
 import { wantLookList } from '../service/index';
 import { mapGetters } from 'vuex';
+import Empty from '../components/Empty';
 export default {
     data () {
         return {
-            wantLookList: null
+            wantLookList: null,
+            emptyType: 'null'
         }
+    },
+    components: {
+        Empty
     },
     computed: {
         ...mapGetters([

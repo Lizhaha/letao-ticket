@@ -10,7 +10,7 @@
                     <div class="msg">
                         <span class="item movie-name">{{movieDetail.movie_name}}</span>
                         <span class="item movie-type">
-                            <span v-for="type in movieDetail.movie_type" :key="type">{{type}}</span>
+                            <span v-for="type in movieDetail.movie_type" :key="type" style="margin-right:5px;">{{type}}</span>
                         </span>
                         <span class="item">{{movieDetail.region}} / {{movieDetail.time_length}} 分钟</span>
                         <span class="item">{{movieDetail.release_time}} 上映</span>

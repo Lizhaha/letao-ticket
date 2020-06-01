@@ -116,3 +116,7 @@ export function deleteSchedule(params) {
 export function addOperate(params) {
   return http.post('/movie/add', params);
 }
+
+export function editMovie(params) {
+  return http.post('/movie/editMovie', params);
+}

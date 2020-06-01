@@ -32,7 +32,7 @@ router.get('/list', function (req, res) {
                     `select SUM(count) as box_office,movie_id from (`+
                         `select \`schedule\`.movie_id,\`order\`.count as count, \`order\`.schedule_id from \`order\`,schedule where \`schedule\`.schedule_id=\`order\`.schedule_id`+
                     `) a GROUP BY movie_id`+
-                `) b,movie where b.movie_id=movie.movie_id and b.box_office>5`+
+                `) b,movie where b.movie_id=movie.movie_id and b.box_office>20`+
             `)c LEFT JOIN (select movie_id,avg(grade) as grade from movie_grade GROUP BY movie_id) d `+
             `on c.movie_id=d.movie_id`;
             break;
@@ -233,7 +233,8 @@ router.get('/allMovie', function(req, res) {
                     timeLength: movie.time_length,
                     director: movie.director,
                     mainActor: movie.main_actor,
-                    imgUrl: movie.img_url
+                    imgUrl: movie.img_url,
+                    region: movie.region
                 }
             });
             res.send(Util.resMsg(true, '查询成功', result));
@@ -394,6 +395,67 @@ router.post('/add', function (req, res) {
             if(err) return console.log('添加放映场次失败'+err.message)
             console.log(result);
             res.send(Util.resMsg(true, '添加放映场次成功'));
+        })
+    }
+})
+
+router.put('/editMovie', function (req, res, next) {
+    console.log('执行编辑');
+    console.log(req.body.type);
+    if (req.body.type === 'noUpload') {
+        let sql = `update movie SET ? where movie_id=${req.body.movieId}`;
+        let movie = {
+            movie_name: req.body.movieName,
+            introduction: req.body.introduction,
+            release_time: req.body.releaseTime,
+            movie_type: req.body.movieType,
+            time_length: req.body.timeLength,
+            director: req.body.director,
+            main_actor: req.body.mainActor,
+            region: req.body.region,
+            img_url: req.body.imgUrl
+        }
+        conn.query(sql, movie, (err) => {
+            if(err) {
+                res.send(Util.resMsg(false, `编辑影片失败`));
+                console.log('编辑影片失败'+err.message, sql)
+                return;
+            } else {
+                res.send(Util.resMsg(true, `编辑影片成功`));
+            }
+        });
+    } else {
+        let form = new formidable.IncomingForm();
+        form.encoding = 'utf-8'; // 编码
+        form.keepExtensions = true;
+        //文件存储路径 最后要注意加 '/' 否则会被存在public下
+        form.uploadDir = path.join(__dirname, '../public/images/poster');
+        // 解析 formData 数据
+        form.parse(req, (err, fields ,files) => {
+            if(err) return next(err)
+            // 解析上传图片的地址，获取图片名称
+            let fileBase = '/static/images/poster/' + path.parse(files.file.path).base
+            let sql = `update movie SET ? where movie_id=${fields.movieId}`;
+            let movie = {
+                movie_name: fields.movieName,
+                introduction: fields.introduction,
+                release_time: fields.releaseTime,
+                movie_type: fields.movieType,
+                time_length: fields.timeLength,
+                director: fields.director,
+                main_actor: fields.mainActor,
+                region: fields.region,
+                img_url: fileBase
+            }
+            conn.query(sql, movie, (err) => {
+            if(err) {
+                res.send(Util.resMsg(false, `编辑影片失败`));
+                console.log('编辑影片失败'+err.message, sql)
+                return;
+            } else {
+                res.send(Util.resMsg(true, `编辑影片成功`, {fileBase: fileBase}));
+            }
+            });
         })
     }
 })

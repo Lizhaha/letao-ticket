@@ -158,9 +158,10 @@
                             <img width="50" :src="baseUrl+scope.row.imgUrl" v-else />
                         </template>
                     </el-table-column>
-                    <el-table-column label="操作">
+                    <el-table-column label="操作" width="180">
                         <template slot-scope="scope">
-                            <el-button @click="handleDelete(scope.row)">删除</el-button>
+                            <el-button type="primary" size="mini" @click="handleEdit(scope.row)">编辑</el-button>
+                            <el-button size="mini" @click="handleDelete(scope.row)">删除</el-button>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -257,13 +258,17 @@
             </div>
         </el-dialog>
         <!-- 添加影片 -->
-        <el-dialog class="add-dialog" title="添加影片" :visible.sync="formVisible.movie">
+        <el-dialog
+            class="add-dialog"
+            title="添加影片"
+            :visible.sync="formVisible.movie"
+            @close="isEdit=false;editRow=null;submitUrl='/movie/addMovie'">
             <div class="add-movie">
                 <div class="left">
                     <el-upload
                         ref="movieUpload"
                         class="avatar-uploader"
-                        :action="baseUrl + '/movie/addMovie'"
+                        :action="baseUrl + submitUrl"
                         :show-file-list="false"
                         :on-change="handleAvatarChange"
                         :on-success="handleAddMovieSuccess"
@@ -398,7 +403,8 @@ import {
     deleteRoom,
     deleteSchedule,
     register,
-    addOperate
+    addOperate,
+    editMovie
 } from '../service/index';
 import Empty from '../components/Empty.vue';
 export default {
@@ -494,7 +500,10 @@ export default {
                 ]
             },
             addLoading: false,
-            posterImg: null
+            posterImg: null,
+            isEdit: false,
+            editRow: null,
+            submitUrl: '/movie/addMovie'
         }
     },
     components: {
@@ -503,9 +512,9 @@ export default {
     mounted () {
         console.log('执行');
         this.getAllMessage(allUser, 'user');
-        document.onclick = () => {
+        document.addEventListener('click', ()=>{
             this.isShowResult = false;
-        };
+        }, false);
     },
     computed: {
         ...mapGetters([
@@ -530,11 +539,12 @@ export default {
             console.log(val);
             this.activeIndex = val;
         },
-        getAllMessage (callback, objName) {
+        getAllMessage (callback, objName, otherCallback) {
             if (this.userInfo) {
                 callback().then((res) => {
                     if (res.success) {
                         this.tableData[objName] = res.data
+                        if (otherCallback) otherCallback();
                     }
                 });
             }
@@ -629,7 +639,7 @@ export default {
                     break;
             }
         },
-        getAll (index) {
+        getAll (index, otherCallback) {
             switch (index) {
                 case '1':
                     this.getAllMessage(allUser, 'user');
@@ -641,7 +651,7 @@ export default {
                     this.getAllMessage(allRoom, 'room');
                     break;
                 case '4':
-                    this.getAllMessage(allSchedule, 'schedule');
+                    otherCallback ? this.getAllMessage(allSchedule, 'schedule', otherCallback) : this.getAllMessage(allSchedule, 'schedule');
                     this.getAllMessage(allMovie, 'movie');
                     break;
                 default:
@@ -678,9 +688,11 @@ export default {
             }
         },
         handleSelectedChange (movieId) {
-            this.tableData.schedule = this.tableData.schedule.filter((schedule) => {
-                return schedule.movieId === movieId;
-            })
+            this.getAll (this.activeIndex, () => {
+                this.tableData.schedule = this.tableData.schedule.filter((schedule) => {
+                    return schedule.movieId === movieId;
+                })
+            });
         },
         handleChoose () {
             this.isShowResult = false;
@@ -692,7 +704,7 @@ export default {
         },
         handleCancelAdd () {
             this.formVisible.movie = false;
-            this.$refs.userForm.resetFields();
+            this.$refs.movieForm.resetFields();
             this.$refs.movieUpload.abort(); 
             this.posterImg = '';
         },
@@ -719,7 +731,32 @@ export default {
                     });
                     break;
                 case '2':
-                    this.$refs.movieUpload.submit();
+                    console.log(this.$refs.movieUpload.uploadFiles.length);
+                    if (!this.isEdit) {
+                        if (this.$refs.movieUpload.uploadFiles.length) {
+                            this.$refs.movieUpload.submit();
+                        } else {
+                            this.$message.warning('请上传影片的海报！');
+                        }
+                    } else {
+                        if (this.$refs.movieUpload.uploadFiles.length && this.$refs.movieUpload.uploadFiles[0].status !== 'success') {
+                            this.$refs.movieUpload.data.movieId = this.editRow.movieId;
+                            this.$refs.movieUpload.submit();
+                            console.log(this.$refs.movieUpload);
+                        } else {
+                            this.movieForm.type = 'noUpload';
+                            editMovie(this.movieForm)
+                            .then(res => {
+                                if (res.success) {
+                                    this.$message.success('编辑成功');
+                                    this.formVisible.movie = false;
+                                    this.getAll(this.activeIndex);
+                                } else {
+                                    this.$message.error('编辑失败');
+                                }
+                            });
+                        }
+                    }
                     break;
                 case '3':
                     this.addLoading = true;
@@ -776,7 +813,7 @@ export default {
         },
         handleAddMovieSuccess (res) {
             if (res.success) {
-                this.$message.success('添加成功');
+                this.$message.success(this.isEdit ? '编辑成功' : '添加成功');
                 this.formVisible.movie = false;
                 this.$refs.movieForm.resetFields();
                 this.posterImg = '';
@@ -803,6 +840,14 @@ export default {
             // }
             // return isJPG && isLt2M;
             return isJPG;
+        },
+        handleEdit(row) {
+            this.submitUrl = '/movie/editMovie';
+            this.isEdit = true;
+            this.editRow = row;
+            this.movieForm = row;
+            this.formVisible.movie = true;
+            this.posterImg = this.baseUrl + row.imgUrl;
         }
     },
     watch: {

@@ -9,7 +9,8 @@ export default new Vuex.Store({
     activeType: '',
     defaultImg: '../assets/images/loginImg.svg',
     cinemaMsg: null,
-    baseUrl: 'http://192.168.51.102:8081',
+    baseUrl: 'http://114.55.254.227:8081',
+    // baseUrl: 'http://127.0.0.1:8081',
     isVisitByPhone: false
   },
   mutations: {

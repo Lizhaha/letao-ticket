@@ -37,7 +37,7 @@
                     <el-dropdown trigger="click" @command="handleClickMenu">
                         <span class="el-dropdown-link">
                             <el-avatar icon="el-icon-user-solid" v-if="!userInfo.avatar"></el-avatar>
-                            <el-avatar :src="baseUrl + userInfo.avatar"></el-avatar>
+                            <el-avatar :src="baseUrl + userInfo.avatar" v-else></el-avatar>
                             <i class="el-icon-caret-bottom"></i>
                         </span>
                         <el-dropdown-menu slot="dropdown">
@@ -70,7 +70,7 @@
                         <el-dropdown trigger="click" @command="handleClickMenu">
                             <span class="el-dropdown-link">
                                 <el-avatar :size="25" icon="el-icon-user-solid" v-if="!userInfo.avatar"></el-avatar>
-                                <el-avatar :size="25" :src="baseUrl + userInfo.avatar"></el-avatar>
+                                <el-avatar :size="25" :src="baseUrl + userInfo.avatar" v-if="userInfo.avatar"></el-avatar>
                                 <i class="el-icon-caret-bottom"></i>
                             </span>
                             <el-dropdown-menu slot="dropdown">
@@ -112,9 +112,9 @@ export default {
     },
     mounted () {
         this.setActiveType(this.activeIndex);
-        document.onclick = () => {
+        document.addEventListener('click', () => {
             this.isShowResult = false;
-        };
+        }, false);
     },
     methods: {
         ...mapActions([

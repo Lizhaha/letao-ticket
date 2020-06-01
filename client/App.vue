@@ -36,7 +36,7 @@ export default {
         }
       }).catch(() => {
         this.$router.replace({path: '/login'});
-        this.$message.error('登录信息已过期，请重新登录');
+        // this.$message.error('登录信息已过期，请重新登录');
       });
     },
     getUserInfo () {
@@ -56,7 +56,7 @@ export default {
           this.setCinemaMsg(res.data);
         }
       }).catch(() => {
-        console.log('获取影院信息失败');
+        // console.log('获取影院信息失败');
       });
     }
   },
